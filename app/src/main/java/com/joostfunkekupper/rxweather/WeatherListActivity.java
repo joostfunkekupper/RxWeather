@@ -5,14 +5,12 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.FrameLayout;
+import android.widget.Toast;
 
 
-public class MainActivity extends ActionBarActivity implements CityWeatherFragment.OnFragmentInteractionListener {
+public class WeatherListActivity extends ActionBarActivity implements CityWeatherFragment.OnFragmentInteractionListener {
 
     private Toolbar toolbar;
-
-    private FrameLayout frameLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,12 +20,8 @@ public class MainActivity extends ActionBarActivity implements CityWeatherFragme
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        frameLayout = (FrameLayout) findViewById(R.id.fragment_container);
-
-        CityWeatherFragment fragment = new CityWeatherFragment();
-
         getSupportFragmentManager().beginTransaction()
-                .add(R.id.fragment_container, fragment).commit();
+                .add(R.id.fragment_container, CityWeatherFragment.newInstance()).commit();
     }
 
 
@@ -55,6 +49,6 @@ public class MainActivity extends ActionBarActivity implements CityWeatherFragme
 
     @Override
     public void onFragmentInteraction(String id) {
-
+        Toast.makeText(this, "Pressed " + id, Toast.LENGTH_SHORT).show();
     }
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.joostfunkekupper.rxweather.dummy.DummyContent;
@@ -18,25 +17,12 @@ import com.joostfunkekupper.rxweather.dummy.DummyContent;
  */
 public class CityWeatherFragment extends ListFragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
     private OnFragmentInteractionListener mListener;
 
-    // TODO: Rename and change types of parameters
-    public static CityWeatherFragment newInstance(String param1, String param2) {
-        CityWeatherFragment fragment = new CityWeatherFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
+    private CustomListAdapter adapter;
+
+    public static CityWeatherFragment newInstance() {
+        return new CityWeatherFragment();
     }
 
     /**
@@ -50,14 +36,15 @@ public class CityWeatherFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+        // Temp data
+        Weather melbourne = new Weather();
+                melbourne.id = 1;
+                melbourne.name = "Melbourne";
 
-        // TODO: Change Adapter to display your content
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(getActivity(),
-                android.R.layout.simple_list_item_1, android.R.id.text1, DummyContent.ITEMS));
+        adapter = new CustomListAdapter(getActivity());
+        adapter.add(melbourne);
+
+        setListAdapter(adapter);
     }
 
 
