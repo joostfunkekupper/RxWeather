@@ -6,6 +6,7 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.joostfunkekupper.rxweather.webservices.OpenWeatherMapClient;
 
@@ -13,8 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import rx.Observable;
+import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
@@ -25,7 +26,7 @@ import rx.schedulers.Schedulers;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class CityWeatherFragment extends ListFragment {
+public class CityWeatherFragment extends ListFragment implements Observer<WeatherResponse> {
 
     private OnFragmentInteractionListener mListener;
 
@@ -63,20 +64,28 @@ public class CityWeatherFragment extends ListFragment {
                 })
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(responseAction);
+                .subscribe(this);
     }
 
-    private Action1<WeatherResponse> responseAction = new Action1<WeatherResponse>() {
-        @Override
-        public void call(WeatherResponse weatherResponse) {
-            Log.e("Observable", "WeatherResponse: " + weatherResponse.name);
+    @Override
+    public void onCompleted() {
+        
+    }
 
-            if (weatherResponse.name != null) {
-                adapter.add(weatherResponse);
-                adapter.notifyDataSetChanged();
-            }
+    @Override
+    public void onError(Throwable e) {
+        Toast.makeText(getActivity(), "Failed to get city weather", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNext(WeatherResponse weatherResponse) {
+        Log.e("Observable", "WeatherResponse: " + weatherResponse.name);
+
+        if (weatherResponse.name != null) {
+            adapter.add(weatherResponse);
+            adapter.notifyDataSetChanged();
         }
-    };
+    }
 
     @Override
     public void onAttach(Activity activity) {
