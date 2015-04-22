@@ -11,7 +11,7 @@ import retrofit.converter.GsonConverter;
 
 public class RxWeatherApplication extends Application {
 
-    private APIClient service;
+    public APIClient service;
 
     @Override
     public void onCreate() {
