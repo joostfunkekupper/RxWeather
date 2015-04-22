@@ -10,10 +10,10 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class CustomListAdapter extends ArrayAdapter<Weather> {
+public class WeatherListAdapter extends ArrayAdapter<WeatherResponse> {
 
-    public CustomListAdapter(Context context) {
-        super(context, 0, new ArrayList<Weather>());
+    public WeatherListAdapter(Context context) {
+        super(context, 0, new ArrayList<WeatherResponse>());
     }
 
     @Override

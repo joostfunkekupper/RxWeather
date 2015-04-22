@@ -7,7 +7,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import java.util.List;
+
+import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -22,7 +26,7 @@ public class CityWeatherFragment extends ListFragment implements Observer<Weathe
 
     private OnFragmentInteractionListener mListener;
 
-    private CustomListAdapter adapter;
+    private WeatherListAdapter adapter;
 
     private RxWeatherApplication app;
 
@@ -37,14 +41,25 @@ public class CityWeatherFragment extends ListFragment implements Observer<Weathe
     public CityWeatherFragment() {
     }
 
+    Observable<List<String>> observableCityIds;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         app = (RxWeatherApplication) getActivity().getApplication();
 
-        adapter = new CustomListAdapter(getActivity());
+        adapter = new WeatherListAdapter(getActivity());
         setListAdapter(adapter);
+
+        observableCityIds.create(new Observable.OnSubscribe<Object>() {
+            @Override
+            public void call(Subscriber<? super Object> subscriber) {
+                Log.e("Observer", "Observable city ids has been subscribed to by " + subscriber.toString());
+            }
+        });
+
+
 
         app.service.fetchWeatherByCityName("Melbourne", "metric")
                 .subscribeOn(Schedulers.newThread())
@@ -66,7 +81,7 @@ public class CityWeatherFragment extends ListFragment implements Observer<Weathe
     public void onNext(WeatherResponse weatherResponse) {
         Log.e("Observer", "Observer response: " + weatherResponse.name);
 
-        adapter.add(new Weather(weatherResponse.id, weatherResponse.name));
+        adapter.add(weatherResponse);
         adapter.notifyDataSetChanged();
     }
 
