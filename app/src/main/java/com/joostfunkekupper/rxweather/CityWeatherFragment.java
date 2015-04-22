@@ -7,12 +7,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 
+import com.joostfunkekupper.rxweather.webservices.OpenWeatherMapClient;
+
+import java.util.Arrays;
 import java.util.List;
 
 import rx.Observable;
-import rx.Observer;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -22,13 +25,13 @@ import rx.schedulers.Schedulers;
  * Activities containing this fragment MUST implement the {@link OnFragmentInteractionListener}
  * interface.
  */
-public class CityWeatherFragment extends ListFragment implements Observer<WeatherResponse> {
+public class CityWeatherFragment extends ListFragment {
 
     private OnFragmentInteractionListener mListener;
 
     private WeatherListAdapter adapter;
 
-    private RxWeatherApplication app;
+    private final OpenWeatherMapClient client = OpenWeatherMapClient.Builder.create();
 
     public static CityWeatherFragment newInstance() {
         return new CityWeatherFragment();
@@ -47,43 +50,33 @@ public class CityWeatherFragment extends ListFragment implements Observer<Weathe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        app = (RxWeatherApplication) getActivity().getApplication();
-
         adapter = new WeatherListAdapter(getActivity());
         setListAdapter(adapter);
 
-        observableCityIds.create(new Observable.OnSubscribe<Object>() {
-            @Override
-            public void call(Subscriber<? super Object> subscriber) {
-                Log.e("Observer", "Observable city ids has been subscribed to by " + subscriber.toString());
-            }
-        });
 
-
-
-        app.service.fetchWeatherByCityName("Melbourne", "metric")
-                .subscribeOn(Schedulers.newThread())
+        Observable.from(Arrays.asList("Melbourne","Sydney"))
+                .flatMap(new Func1<String, Observable<WeatherResponse>>() {
+                    @Override
+                    public Observable<WeatherResponse> call(String city) {
+                        return client.fetchWeatherByCityName(city, "metric");
+                    }
+                })
+                .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this);
+                .subscribe(responseAction);
     }
 
-    @Override
-    public void onCompleted() {
-        Log.e("Observer", "Completed");
-    }
+    private Action1<WeatherResponse> responseAction = new Action1<WeatherResponse>() {
+        @Override
+        public void call(WeatherResponse weatherResponse) {
+            Log.e("Observable", "WeatherResponse: " + weatherResponse.name);
 
-    @Override
-    public void onError(Throwable e) {
-        Log.e("Observer", "Error: " + e.toString());
-    }
-
-    @Override
-    public void onNext(WeatherResponse weatherResponse) {
-        Log.e("Observer", "Observer response: " + weatherResponse.name);
-
-        adapter.add(weatherResponse);
-        adapter.notifyDataSetChanged();
-    }
+            if (weatherResponse.name != null) {
+                adapter.add(weatherResponse);
+                adapter.notifyDataSetChanged();
+            }
+        }
+    };
 
     @Override
     public void onAttach(Activity activity) {
