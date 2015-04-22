@@ -3,7 +3,6 @@ package com.joostfunkekupper.rxweather;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
-import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -55,7 +54,7 @@ public class CityWeatherFragment extends ListFragment implements Observer<Weathe
         setListAdapter(adapter);
 
 
-        Observable.from(Arrays.asList("Melbourne","Sydney"))
+        Observable.from(Arrays.asList("Melbourne,AU","Sydney,AU"))
                 .flatMap(new Func1<String, Observable<WeatherResponse>>() {
                     @Override
                     public Observable<WeatherResponse> call(String city) {
@@ -69,7 +68,7 @@ public class CityWeatherFragment extends ListFragment implements Observer<Weathe
 
     @Override
     public void onCompleted() {
-        
+
     }
 
     @Override
@@ -79,9 +78,7 @@ public class CityWeatherFragment extends ListFragment implements Observer<Weathe
 
     @Override
     public void onNext(WeatherResponse weatherResponse) {
-        Log.e("Observable", "WeatherResponse: " + weatherResponse.name);
-
-        if (weatherResponse.name != null) {
+        if (weatherResponse.cod == 200) {
             adapter.add(weatherResponse);
             adapter.notifyDataSetChanged();
         }

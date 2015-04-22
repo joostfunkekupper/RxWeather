@@ -31,7 +31,7 @@ public class WeatherListAdapter extends ArrayAdapter<WeatherResponse> {
             viewHolder = (ViewHolder) cityRow.getTag();
         }
 
-        viewHolder.cityName.setText(getItem(position).name);
+        viewHolder.cityName.setText(cityCurrentWeather(getItem(position)));
 
         return cityRow;
     }
@@ -42,5 +42,11 @@ public class WeatherListAdapter extends ArrayAdapter<WeatherResponse> {
         public ViewHolder(View view) {
             cityName = (TextView) view.findViewById(R.id.city_name);
         }
+    }
+
+    private String cityCurrentWeather(WeatherResponse weatherResponse) {
+        return String.format("%s - %.1f C",
+                weatherResponse.name,
+                weatherResponse.main.temp);
     }
 }
