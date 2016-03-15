@@ -12,6 +12,8 @@ public interface OpenWeatherMapClient {
     @GET("/weather")
     Observable<WeatherResponse> fetchWeatherByCityName(@Query("q") String cityName, @Query("units") String units);
 
+    // TODO: Load weather predictions for a week
+
     /**
      * Create an OpenWeatherMapClient singleton
      */
