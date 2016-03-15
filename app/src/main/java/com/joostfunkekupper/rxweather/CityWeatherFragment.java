@@ -53,7 +53,7 @@ public class CityWeatherFragment extends ListFragment implements Observer<Weathe
         adapter = new WeatherListAdapter(getActivity());
         setListAdapter(adapter);
 
-
+        // TODO: Capture entire weeks forecast
         Observable.from(Arrays.asList("Melbourne,AU","Sydney,AU"))
                 .flatMap(new Func1<String, Observable<WeatherResponse>>() {
                     @Override
