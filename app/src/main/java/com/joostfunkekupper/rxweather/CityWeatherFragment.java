@@ -65,6 +65,10 @@ public class CityWeatherFragment extends ListFragment implements Observer<Weathe
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this);
     }
+    
+    private void WeeklyForecast() {
+        
+    }
 
     @Override
     public void onCompleted() {
